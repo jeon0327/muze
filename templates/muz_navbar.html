@@ -1,0 +1,55 @@
+{% load static %}
+<header data-bs-theme="dark">
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top" style="background-color: #212121;">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{% url 'muze:main' %}"><img src="{% static 'logo.png' %}" alt="" height="60px"></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav me-auto mb-2 mb-md-0 justify-content-start">
+          <li class="nav-item me-3">
+            <a class="nav-link nav_fun" aria-current="page" href="{% url 'muze:main' %}" style="font-size: 20px;">홈</a>
+          </li>
+          <li class="nav-item me-3">
+            <a class="nav-link nav_fun" href="{% url 'muze:ticket_list' %}" style="white-space: nowrap; font-size: 20px;">티켓</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link nav_fun" href="{% url 'board:board' %}" style="white-space: nowrap; font-size: 20px;">게시판</a>
+          </li>
+        </ul>
+      </div>
+      <div class="container-fluid d-flex justify-content-end align-items-center">
+        <ul class="navbar-nav d-flex flex-row mb-0 me-3">
+          {% if user.is_anonymous %}
+            <li class="nav-item me-3">
+              <a class="nav-link nav_fun" href="{% url 'muze:signup' %}?next={{ request.path }}">회원가입</a>
+            </li>
+            <li class="nav-item me-3">
+              <a class="nav-link nav_fun" href="{% url 'muze:login' %}?next={{ request.path }}">로그인</a>
+            </li>
+          {% else %}
+            <!-- 관리자 계정일 때 티켓 추가 메뉴 추가 -->
+            {% if user.is_superuser %}
+              <li class="nav-item me-3">
+                <a class="nav-link nav_fun" href="{% url 'muze:concert_create' %}">티켓 추가</a>
+              </li>
+            {% endif %}
+            <li class="nav-item me-3">
+              <form method="post" action="{% url 'muze:logout' %}?next={{ request.path }}">
+                {% csrf_token %}
+                <button class="nav-link btn btn-link nav_fun" type="submit">
+                  [ {{ user.username }} ]  로그아웃
+                </button>
+              </form>
+            </li>
+          {% endif %}
+        </ul>
+        <form class="d-flex" role="search">
+          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+          <button class="btn btn-outline-danger" type="submit" style="white-space: nowrap;">검색</button>
+        </form>
+      </div>
+    </div>
+  </nav>
+</header>

@@ -1,0 +1,40 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block extra_styles %}
+  <link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="login-block" style="padding-top: 150px; padding-bottom: 230px;">
+<div class="container">
+  <div class="row">
+    <div class="card border-0 col-lg-4 mx-auto">
+      <div class="card-body">
+        <h1 class="text-center mt-4 mb-5">LOGIN</h1>
+        <form method="post" action="{% url 'muze:login' %}">
+          {% csrf_token %}
+          {% include "form_errors.html" %}
+          <input type="hidden" name="next" value="{{ request.GET.next }}">
+          <div class="input-group mb-2">
+            <input type="text" class="form-control" name="username" id="username"
+              placeholder="아이디" value="{{ form.username.value|default_if_none:'' }}">
+          </div>
+          <div class="input-group mb-0">
+            <input type="password" class="form-control" name="password" id="password" 
+            placeholder="비밀번호" value="{{ form.password.value|default_if_none:'' }}">
+          </div>
+          <div class="d-grid gap-1 mb-5">
+            <button type="submit" class="btn btn-outline-danger mt-4">로그인</button>
+            <div class="text-end mt-1">
+              <a class="text-decoration-none text-reset me-2" href="{% url 'muze:signup' %}">회원가입</a>
+              <a class="text-decoration-none text-reset" href="{% url 'muze:main' %}">취소</a>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+{% endblock %}

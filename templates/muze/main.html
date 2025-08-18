@@ -1,0 +1,191 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block style %}
+<style>
+  /* 콘서트 카드 꾸미기 */
+  .poster p {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 400;
+    color: #888;
+    font-size: 10px; !important;
+    margin: 8px 0 2px;  /* 날짜와 제목 간격 좁힘 */
+  }
+  .poster h2 {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    color: #222;
+    margin-top: 0; /* 위쪽 여백 제거 */
+  }
+
+  /* 포스터와 섹션 사이 간격 조정 */
+  .container.marketing {
+    margin-bottom: 0 !important;   /* 아래쪽 여백 제거 */
+  }
+  .section-below {
+    margin-top: 10px !important;   /* 포스터랑 섹션 사이 딱 20px */
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+    <!-- 넘어가는 사진 -->
+    <div id="myCarousel" class="carousel slide mb-6" data-bs-ride="carousel">
+      <div class="carousel-indicators">
+        <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+      </div>
+      <div class="carousel-inner">
+        <!-- 사진 1 -->
+        <div class="carousel-item active">
+          <img src="{% static 'main1.png' %}" class="d-block w-100" alt="...">
+        </div>
+        <!-- 사진 2 -->
+        <div class="carousel-item">
+          <img src="{% static 'main2.jpg' %}" class="d-block w-100" alt="..." style="margin-top: -600px;">
+          <div class="container">
+            <div class="carousel-caption"></div>
+          </div>
+        </div>
+        <!-- 사진 3 -->
+        <div class="carousel-item">
+          <img src="{% static 'main3.jpg' %}" class="d-block w-100" alt="...">
+          <div class="container">
+            <div class="carousel-caption"></div>
+          </div>
+        </div>
+      </div>
+      <!-- 다음 및 이전 -->
+      <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#myCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+    </div>
+
+    <!-- 포스터 -->
+    <div class="container mt-5">
+      <h2 style="margin: 40px 0 20px; font-weight: bold; font-size: 1.25em; border-bottom: 2px solid #ccc; padding-bottom: 8px; padding-left: 12px;">
+        최근 콘서트 목록
+      </h2>
+    </div>
+
+    <div class="container marketing mt-3">
+      <div class="row justify-content-center">
+        {% for c in concerts %}
+        <div class="col-lg-3 mb-4 d-flex justify-content-center">
+          <div class="card text-center poster" style="width: 240px; margin: 0 8px;">
+            <a href="/tickets/{{ c.id }}">
+              <img src="{{ c.poster.url }}" width="240" height="312" alt="" style="object-fit: cover;">
+              <p>{{ c.date }}</p>
+              <h2>{{ c.title }}</h2>
+            </a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- 랭킹 / 리뷰 / 최신 게시글 -->
+    <div class="container section-below">
+      <div class="row align-items-stretch">
+        
+        <!-- 왼쪽: 인기 티켓 -->
+        <div class="col-md-4 d-flex flex-column">
+          <div class="d-flex align-items-center" style="height: 48px;">
+            <h5 class="mb-0 fw-bold" style="border-left: 4px solid #D32F42; padding-left: 10px; color: #333;">
+              오늘의 <span style="color:#D32F42;">인기 티켓</span>
+            </h5>
+          </div>
+
+          <div class="mt-3" style="max-height: 420px; overflow-y: auto;">
+            {% for c in top_concerts %}
+            <div class="card shadow-md p-3 mb-3">
+              <div class="d-flex align-items-center">
+                <!-- 순위 -->
+                <div class="me-3 fw-bold text-danger" style="width: 16px;">{{ forloop.counter }}</div>
+                
+                <!-- 포스터 -->
+                <img src="{{ c.poster.url }}" alt="포스터" 
+                     style="width: 60px; height: 80px; object-fit: cover; margin-right: 12px; border-radius: 4px;">
+
+                <!-- 제목 + 날짜/장소 -->
+                <div class="flex-grow-1">
+                  <p class="mb-1 fw-bold text-dark" style="font-size: 14px;">{{ c.title }}</p>
+                  <small class="text-muted d-block">{{ c.date }}</small>
+                  <small class="text-muted">{{ c.location }}</small>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- 가운데: 콘서트 리뷰 -->
+        <div class="col-md-4 d-flex flex-column">
+          <div class="d-flex align-items-center" style="height: 48px;">
+            <h5 class="mb-0 fw-bold" style="border-left: 4px solid #D32F42; padding-left: 10px; color: #333;">
+              인기 <span style="color:#D32F42;">콘서트 리뷰</span>
+            </h5>
+          </div>
+
+          <div class="mt-3" style="max-height: 420px; overflow-y: auto;">
+            {% for r in latest_reviews %}
+            <div class="card shadow-md p-3 mb-3">
+              <!-- 콘서트 제목 + 별점 -->
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <small class="fw-bold text-dark">{{ r.concert.title }}</small>
+                <span class="text-warning">
+                  {% for i in "12345"|make_list %}
+                    {% if r.rating >= forloop.counter %}★{% else %}☆{% endif %}
+                  {% endfor %}
+                </span>
+              </div>
+
+              <!-- 작성자 -->
+              <div class="mb-2">
+                <small class="fw-bold text-muted">작성자: {{ r.nickname }}</small>
+              </div>
+
+              <!-- 리뷰 내용 -->
+              <p class="mb-0" style="font-size: 14px;">{{ r.content|truncatechars:80 }}</p>
+            </div>
+            {% empty %}
+              <div class="card shadow-md p-3"><small class="text-muted">아직 표시할 리뷰가 없습니다.</small></div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- 오른쪽: 최신 게시글 -->
+        <div class="col-md-4 d-flex flex-column">
+          <div class="d-flex align-items-center" style="height: 48px;">
+            <h5 class="mb-0 fw-bold" style="border-left: 4px solid #D32F42; padding-left: 10px; color: #333;">
+              최신 <span style="color:#D32F42;">게시글</span>
+            </h5>
+          </div>
+
+          <ul class="list-group mt-3" style="max-height: 420px; overflow-y: auto;">
+            {% for post in latest_posts %}
+              <li class="list-group-item d-flex justify-content-between align-items-center py-2">
+                <a href="{% url 'board:post_detail' post.id %}" class="fw-bold text-dark text-decoration-none" style="font-size: 14px;">
+                  {{ post.title }}
+                </a>
+                <div class="d-flex align-items-center" style="gap:6px;">
+                  <small class="text-muted">{{ post.author }}</small>
+                  <small class="text-muted">{{ post.created_at|date:"m/d" }}</small>
+                </div>
+              </li>
+            {% empty %}
+              <li class="list-group-item text-muted">아직 게시글이 없습니다.</li>
+            {% endfor %}
+          </ul>
+        </div>
+
+      </div>
+    </div>
+{% endblock %}
+

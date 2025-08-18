@@ -1,0 +1,393 @@
+{% extends "main.html" %} 
+{% load static %}
+{% load form_tags %}
+
+{% block title %}{{ concert.title }}{% endblock %}
+
+{% block style %}
+@import url('https://fonts.googleapis.com/css2?family=SUIT:wght@400;500;700;900&display=swap');
+
+body {
+  font-family: 'SUIT', sans-serif;
+  background-color: #f5f6fa;
+  color: #222;
+}
+
+.container {
+  max-width: 1100px;
+}
+
+.ticket-wrapper {
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  padding: 40px;
+  display: flex;
+  gap: 40px;
+  margin-bottom: 60px;
+  flex-wrap: nowrap;
+}
+
+.poster-img {
+  width: 500px;
+  height: 820px;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.concert-info-box {
+  flex: 1;
+  max-width: 500px;
+}
+
+.concert-title-main {
+  font-weight: 900;
+  font-size: 2.4rem;
+  color: #111;
+  margin-bottom: 0.4rem;
+}
+.concert-sub-info {
+  color: #666;
+  font-size: 1.1rem;
+  margin-bottom: 1.2rem;
+}
+
+.info-table {
+  width: 100%;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.info-table th,
+.info-table td {
+  padding: 12px 16px;
+  vertical-align: middle;
+  font-size: 1rem;
+  border-bottom: 1px solid #eee;
+}
+.info-table th {
+  width: 100px;
+  background-color: #f8f8f8;
+  font-weight: 600;
+  color: #333;
+}
+
+.like-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.05rem;
+  margin-top: 20px;
+  color: #fff;
+  background-color: #ff4d4d;
+  border-radius: 30px;
+  padding: 14px 24px;
+  width: 100%;
+}
+
+.calendar-box {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 16px;
+  background: #fff;
+  margin-top: 20px;
+}
+
+.table-calendar {
+  width: 100%;
+  text-align: center;
+  font-size: 0.95rem;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.table-calendar th,
+.table-calendar td {
+  padding: 6px 8px;
+  border: 1px solid #ddd;
+  width: 14.28%;
+  box-sizing: border-box;
+}
+.table-calendar th {
+  font-weight: 600;
+  color: #444;
+}
+.table-calendar .bg-warning {
+  background-color: #ffdd57 !important;
+  border-radius: 6px;
+}
+
+.btn-group-booking {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 30px;
+  width: 100%;
+}
+.btn-primary,
+.btn-outline-primary {
+  padding: 16px 24px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  width: 100%;
+  text-align: center;
+}
+.btn-primary {
+  background-color: #222;
+  color: #fff;
+  border: none;
+}
+.btn-primary:hover {
+  background-color: #444;
+}
+.btn-outline-primary {
+  background-color: transparent;
+  color: #0d6efd;
+  border: 2px solid #0d6efd;
+}
+.btn-outline-primary:hover {
+  background-color: #0d6efd;
+  color: #fff;
+}
+
+.white-box {
+  background-color: #fff;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  max-width: 880px;
+  margin: 0 auto;
+}
+
+.nav-tabs {
+  justify-content: center;
+  margin-top: 60px;
+  border-bottom: 1px solid #ddd;
+  max-width: 880px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.nav-tabs .nav-link {
+  font-weight: 600;
+  color: #666;
+  border: none;
+  border-bottom: 3px solid transparent;
+  padding: 10px 24px;
+}
+.nav-tabs .nav-link.active {
+  color: #111;
+  border-bottom: 3px solid #111;
+}
+
+.tab-content-area {
+  background: #fff;
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+  margin: 0 auto 100px auto;
+  max-width: 880px;
+}
+
+.star-rating label {
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #ccc;
+}
+
+.star-rating input:checked + label,
+.star-rating label:hover {
+  color: gold;
+}
+{% endblock %}
+
+{% block content %}
+<div style="height: 90px;"></div>
+<div class="container my-5">
+  <div class="ticket-wrapper">
+    <div>
+      <img src="{{ concert.poster.url }}" alt="{{ concert.title }} 포스터" class="poster-img">
+      {% if user.is_authenticated %}
+      <div class="like-box">
+        <span id="like-count">&#9829; {{ concert.likes }}</span>
+        <button id="like-btn" class="btn btn-sm btn-outline-light ms-2">좋아요</button>
+      </div>
+      {% else %}
+      <div class="like-box">
+        <span id="like-count">&#9829; {{ concert.likes }}</span>
+        <button type="button" class="btn btn-sm btn-outline-light ms-2" onclick="alert('로그인 후 좋아요가 가능합니다!')">좋아요</button>
+      </div>
+      {% endif %}
+    </div>
+    <div class="concert-info-box">
+      <h1 class="concert-title-main">{{ concert.title }}</h1>
+      <p class="concert-sub-info">{{ concert.date }} | {{ concert.location }}</p>
+      <table class="info-table">
+        <tr><th>가격</th><td><strong style="color:#e34113;">{{ concert.price }}</strong></td></tr>
+        <tr><th>출연</th><td>{{ concert.lineup }}</td></tr>
+        <tr><th>등급</th><td>{{ concert.rating }}</td></tr>
+        <tr><th>관람시간</th><td>{{ concert.runtime }}</td></tr>
+      </table>
+      <p><strong>공연시간 안내 </strong><br>{{ concert.performance_times }}</p>
+      <p style="color:#ae1818;"><strong>배송정보</strong><br>
+        본 상품은 일괄배송 상품으로 {{ delivery_date|date:"Y년 n월 j일" }}부터 순차 배송됩니다.
+      </p>
+      <div class="calendar-box">
+        <p class="fw-bold mb-2">{{ concert.date|date:"Y.m" }}</p>
+        <table class="table-calendar">
+          <thead>
+            <tr><th>일</th><th>월</th><th>화</th><th>수</th><th>목</th><th>금</th><th>토</th></tr>
+          </thead>
+          <tbody>
+            {% for week in calendar_matrix %}
+            <tr>
+              {% for day in week %}
+                {% if day == 0 %}
+                  <td></td>
+                {% elif day == concert_day %}
+                  <td class="bg-warning fw-bold">{{ day }}</td>
+                {% else %}
+                  <td>{{ day }}</td>
+                {% endif %}
+              {% endfor %}
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <p class="mt-2 text-end text-muted small">* 오후 7시 00분</p>
+      </div>
+      <div class="btn-group-booking">
+       {% if user.is_authenticated %}
+        <a href="#" id="booking-btn" class="btn btn-primary">예매하기</a>
+       {% else %}
+	<button type="button" class="btn btn-primary" onclick="alert('로그인 후 예매가 가능합니다!')">예매하기</button>
+       {% endif %}
+        <a href="{% url 'muze:ticket_list' %}" class="btn btn-outline-primary">콘서트 메인으로</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="white-box">
+    <h4>공연정보</h4>
+    <img src="{{ concert.description_image.url }}" class="img-fluid mt-3" alt="{{ concert.title }} 상세 이미지">
+  </div>
+
+  <ul class="nav nav-tabs" id="concertTab" role="tablist">
+    <li class="nav-item">
+      <button class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button">상세정보</button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" id="review-tab" data-bs-toggle="tab" data-bs-target="#review" type="button">리뷰후기</button>
+    </li>
+  </ul>
+
+  <div class="tab-content tab-content-area" id="concertTabContent">
+    <div class="tab-pane fade show active" id="info">
+      <b>공연정보 안내</b><br>
+            본 공연은 정해진 시간에만 진행되며, 관람객의 안전과 공연 품질 유지를 위해 입장
+ 마감 시간 이후에는 입장이 제한될 수 있습니다.<br>
+      티켓은 예매 후 취소 및 환불이 불가하오니 신중히 구매 부탁드립니다.<br>
+      본 티켓은 타인에게 양도할 수 없으며, 예매자 본인의 실물 신분증 확인이 필요할 >수 있습니다.<br>
+      티켓 문의 : Muze 고객센터(9997-7755)<br>
+      공연 관련 문의 : pok_summer@naver.com
+
+    </div>
+
+    <div class="tab-pane fade" id="review">
+      <h4 class="fw-bold mb-4">콘서트 리뷰</h4>
+      {% if user.is_authenticated %}
+      <form method="POST" id="reviewForm" autocomplete="off" class="border rounded p-4 shadow-sm bg-white">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label for="id_title" class="form-label">제목</label>
+          {{ form.title|add_class:"form-control" }}
+        </div>
+        <div class="mb-3">
+          <label for="id_nickname" class="form-label">작성자</label>
+          <input type="text" class="form-control" value="{{ user.username }}" readonly>
+        </div>
+        <div class="mb-3">
+          <label class="form-label d-block">평점</label>
+          <div class="star-rating">
+            {% for i in "12345" %}
+              <input type="radio" class="btn-check" name="rating" id="star{{ i }}" value="{{ i }}" required>
+              <label class="btn btn-outline-warning me-1" for="star{{ i }}">
+                {{ "★"|repeat:i }}
+              </label>
+            {% endfor %}
+          </div>
+          <small class="text-muted mt-1 d-block">왼쪽이 낮은 평점, 오른쪽이 높은 평점입니다.</small>
+        </div>
+        <div class="mb-3">
+          <label for="id_content" class="form-label">리뷰 내용</label>
+          {{ form.content|add_class:"form-control" }}
+        </div>
+        <button type="submit" class="btn btn-primary w-100">리뷰 등록</button>
+      </form>
+      {% else %}
+      <button type="button" class="btn btn-sm btn-outline-light ms-2" onclick="alert('로그인 후 리뷰작성이 가능합니다!')">리뷰 등록</button>
+      {% endif %}
+
+      <div id="reviewList" class="mt-4">
+        {% for review in reviews %}
+          <div class="border p-3 mb-2 rounded bg-light">
+            {% if review.title %}<p class="mt-1 mb-0"><strong>{{ review.title }}</strong></p>{% endif %}
+            <div class="d-flex justify-content-between mb-1">
+              <span class="text-muted">{{ review.nickname }}</span>
+              <span class="text-muted">{{ review.created_at|date:"Y-m-d" }}</span>
+            </div>
+            <div>
+              {% for i in "12345"|make_list %}
+                {% if forloop.counter <= review.rating %}
+                  <span style="color: gold;">★</span>
+                {% else %}
+                  <span style="color: lightgray;">★</span>
+                {% endif %}
+              {% endfor %}
+            </div>
+            <p class="mt-2 mb-0">{{ review.content }}</p>
+
+            {% if user.is_authenticated %}
+              {% if user == review.user or user.is_staff %}
+                 <form method="POST" action="{% url 'muze:delete_review' review.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-danger">삭제</button>
+                 </form>
+              {% endif %}
+            {% endif %}
+          </div>
+        {% empty %}
+          <p class="text-muted">등록된 리뷰가 없습니다.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.getElementById('like-btn')?.addEventListener('click', function () {
+    fetch("{% url 'muze:like_concert' concert.id %}")
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('like-count').innerHTML = "&#9829; " + data.likes;
+      });
+  });
+
+
+
+  // JavaScript에서 Django 템플릿 태그를 사용하여 concert.id 값을 전달
+  function openBookingPage() {
+    // concert.id를 Django 템플릿에서 가져와서 URL에 포함
+    window.open("{% url 'muze:ticket_booking' concert.id %}", "ticketBookingWindow", "width=800,height=600,scrollbars=yes,resizable=yes");
+  }
+
+  document.getElementById('booking-btn')?.addEventListener('click', function() {
+    openBookingPage();
+  });
+
+</script>
+{% endblock %}
