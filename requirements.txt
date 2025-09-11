@@ -1,0 +1,7 @@
+Django==3.1
+mysqlclient
+mod_wsgi
+dotenv
+Pillow
+django-grappelli
+django-redis
